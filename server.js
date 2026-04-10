@@ -7,7 +7,7 @@ const path = require('path');
 const fs = require('fs');
 
 const app = express();
-const PORT = process.env.PORT || 2005;
+const PORT = process.env.PORT || 3005;
 
 // Configurar SQLite
 const db = new sqlite3.Database('database.sqlite', (err) => {
@@ -31,7 +31,7 @@ function initDb() {
         fecha DATETIME DEFAULT CURRENT_TIMESTAMP
       )
     `);
-    
+
     db.run(`
       CREATE TABLE IF NOT EXISTS analytics (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -65,7 +65,7 @@ app.get('/api/config', (req, res) => {
   try {
     const preguntasData = JSON.parse(fs.readFileSync(path.join(__dirname, 'preguntas.json'), 'utf-8'));
     const cutoffData = JSON.parse(fs.readFileSync(path.join(__dirname, 'cutoff.json'), 'utf-8'));
-    
+
     res.json({
       success: true,
       data: {
@@ -90,7 +90,7 @@ app.post('/api/leads', (req, res) => {
   const sql = 'INSERT INTO leads (nombre, email, rubro, empresa) VALUES (?, ?, ?, ?)';
   const params = [nombre, email, rubro, empresa || ''];
 
-  db.run(sql, params, function(err) {
+  db.run(sql, params, function (err) {
     if (err) {
       console.error("Error inserting lead:", err.message);
       return res.status(500).json({ success: false, error: 'Error interno guardando form' });
@@ -105,7 +105,7 @@ app.post('/api/leads', (req, res) => {
         if (err) console.error("Error logging lead analytics:", err.message);
       });
     }
-    
+
     res.status(201).json({ success: true, lead_id: leadId });
   });
 });
