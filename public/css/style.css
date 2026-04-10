@@ -47,8 +47,9 @@ body {
     min-height: 100vh;
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: center; /* Default centering */
     overflow-x: hidden;
+    padding: 20px 0;
 }
 
 /* Background Gradients */
@@ -226,7 +227,11 @@ select option { background: var(--color-bg); }
 
 /* Mobile Adjustments */
 @media (max-width: 480px) {
-    .glass-card { padding: 24px 20px; }
+    body {
+        align-items: flex-start; /* Start from top on small screens to avoid being cut off */
+        padding-top: 10vh; /* Better visual balance */
+    }
+    .glass-card { padding: 32px 20px; }
     .main-title { font-size: 1.5rem; }
     .btn { width: 100%; justify-content: center; }
     .survey-footer { flex-direction: column-reverse; gap: 12px; }
