@@ -1,0 +1,23 @@
+{
+  "scoring": {
+    "min": 0,
+    "max": 24,
+    "ranges": [
+      {
+        "profile": "red",
+        "min": 0,
+        "max": 11
+      },
+      {
+        "profile": "yellow",
+        "min": 12,
+        "max": 18
+      },
+      {
+        "profile": "green",
+        "min": 19,
+        "max": 24
+      }
+    ]
+  }
+}

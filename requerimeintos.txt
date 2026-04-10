@@ -1,0 +1,230 @@
+# 📊 Requerimientos Funcionales – Encuesta Núcleo Digital PyMEs
+
+## 1. Objetivo del sistema
+
+Desarrollar una encuesta interactiva que:
+
+* Evalúe el nivel de madurez digital de una empresa
+* Calcule un score automático
+* Asigne un perfil (red, yellow, green)
+* Muestre una pantalla de resultados optimizada para conversión
+* Capture leads y/o derive a acción (CTA)
+
+---
+
+## 2. Estructura general
+
+### 2.1 Flujo principal
+
+1. Pantalla de inicio (opcional)
+2. Encuesta (8 preguntas)
+3. Cálculo de score
+4. Asignación de perfil
+5. Pantalla de resultado
+6. Acción del usuario (CTA / captura de lead)
+
+---
+
+## 3. Encuesta
+
+### 3.1 Comportamiento
+
+* Mostrar 1 pregunta por vez
+* Respuesta obligatoria para avanzar
+* Navegación:
+
+  * Botón "Siguiente"
+  * Opcional: "Anterior"
+* Mostrar progreso (ej: “3 de 8” o barra)
+
+### 3.2 Datos
+
+* Consumir preguntas desde JSON configurable
+* Cada opción tiene:
+
+  * text
+  * points (0–3)
+
+---
+
+## 4. Lógica de scoring
+
+### 4.1 Cálculo
+
+* Sumar puntos de todas las respuestas
+* Rango total: 0 a 24
+
+### 4.2 Clasificación
+
+* 0–11 → red
+* 12–18 → yellow
+* 19–24 → green
+
+### 4.3 Output
+
+Generar objeto resultado:
+
+```json
+{
+  "score": 16,
+  "maxScore": 24,
+  "profile": "yellow"
+}
+```
+
+---
+
+## 5. Pantalla de resultados
+
+### 5.1 Contenido dinámico
+
+Renderizar según perfil:
+
+* header.title
+* header.subtitle
+* scoreText
+* diagnosis[] (bullets)
+* opportunity
+* cta.primary
+* cta.secondary
+* reinforcement
+
+### 5.2 Elementos UI obligatorios
+
+* Score visible (ej: “16 / 24”)
+* Barra de progreso visual
+* CTA principal (botón destacado)
+* CTA secundario (link o botón secundario)
+
+### 5.3 Comportamiento
+
+* CTA principal:
+
+  * Abrir URL externa (ctaLink)
+* CTA secundario:
+
+  * Alternativa (ej: scroll, modal o link)
+
+---
+
+## 6. Captura de leads (opcional pero recomendado)
+
+### 6.1 Modal o inline form
+
+Antes o después del resultado:
+
+Campos mínimos:
+
+* Nombre
+* Email
+* Empresa (opcional)
+
+### 6.2 Comportamiento
+
+* No bloquear acceso al resultado (recomendado)
+* Alternativa: gating parcial (testear A/B)
+
+### 6.3 Integración
+
+* Enviar datos a:
+
+  * Webhook / API
+  * CRM (ej: HubSpot, Airtable, etc.)
+
+---
+
+## 7. Persistencia
+
+### 7.1 Opcional
+
+* Guardar respuestas en:
+
+  * localStorage (para continuidad)
+  * backend (para analytics)
+
+---
+
+## 8. Analytics
+
+### 8.1 Eventos a trackear
+
+* survey_started
+* question_answered
+* survey_completed
+* result_viewed
+* cta_clicked
+* lead_submitted
+
+### 8.2 Datos asociados
+
+* score
+* profile
+* tiempo total
+* drop-off por pregunta
+
+---
+
+## 9. UX/UI
+
+### 9.1 Requisitos
+
+* Mobile-first
+* Tiempo de carga bajo
+* Transiciones suaves entre preguntas
+
+### 9.2 CTA
+
+* Sticky en mobile
+* Visible sin scroll (above the fold en resultado)
+
+---
+
+## 10. Configuración
+
+Todo debe ser configurable vía JSON:
+
+* questions[]
+* profiles{}
+* scoring{}
+* textos de UI
+
+---
+
+## 11. Requisitos no funcionales
+
+* Responsive (mobile, tablet, desktop)
+* Performance optimizada
+* SEO básico (si aplica landing)
+* Accesibilidad mínima (labels, contraste)
+
+---
+
+## 12. Entregables esperados
+
+* Componente de encuesta
+* Motor de scoring
+* Pantalla de resultados
+* Integración con API/webhook
+* Tracking de eventos
+
+---
+
+## 13. Criterios de aceptación
+
+* Usuario puede completar encuesta sin fricción
+* Score se calcula correctamente
+* Perfil asignado correctamente
+* Resultado refleja el perfil correcto
+* CTA es funcional
+* Datos se registran correctamente en analytics
+
+```
+---
+
+## 🚀 Notas clave para el agentic (esto evita quilombos)
+
+- ❗ NO hardcodear preguntas ni perfiles → todo por JSON  
+- ❗ Separar lógica de scoring del UI  
+- ❗ Pensar en reusabilidad (esto puede escalar a más encuestas)  
+- ❗ Priorizar mobile UX  
+

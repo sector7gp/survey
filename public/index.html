@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Encuesta: Madurez Digital PyMEs - TablerosVivos</title>
+    <meta name="description" content="Evaluá el nivel de madurez digital de tu empresa en pocos minutos y descubrí cómo optimizar tu gestión.">
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Main CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div id="app" class="app-container">
+        
+        <!-- PANTALLA INICIO -->
+        <section id="screen-intro" class="screen screen-active">
+            <div class="glass-card text-center slide-up">
+                <div class="logo-placeholder">📊</div>
+                <h1 class="main-title">Diagnóstico de Madurez Digital</h1>
+                <p class="subtitle">Evaluá cómo está gestionando la información tu Pyme y descubrí tu potencial de mejora.</p>
+                
+                <div class="intro-features">
+                    <div class="feature-item">⏱️ Toma 2 minutos</div>
+                    <div class="feature-item">🎯 Score personalizado</div>
+                    <div class="feature-item">🚀 Plan de acción</div>
+                </div>
+
+                <button id="btn-start" class="btn btn-primary btn-large cta-reveal">Comenzar Evaluación</button>
+            </div>
+            <div class="bg-gradient"></div>
+        </section>
+
+        <!-- PANTALLA ENCUESTA -->
+        <section id="screen-survey" class="screen screen-hidden">
+            <div class="survey-header">
+                <div class="progress-container">
+                    <div id="progress-bar" class="progress-bar"></div>
+                </div>
+                <div id="progress-text" class="progress-text">Pregunta 1 de 8</div>
+            </div>
+            
+            <div class="glass-card question-container slide-in">
+                <h2 id="question-text" class="question-text">Cargando...</h2>
+                <div id="options-container" class="options-grid">
+                    <!-- Opciones renderizadas dinamicamente -->
+                </div>
+            </div>
+
+            <div class="survey-footer">
+                <button id="btn-prev" class="btn btn-outline" disabled>⟵ Anterior</button>
+                <button id="btn-next" class="btn btn-primary" disabled>Siguiente ⟶</button>
+            </div>
+        </section>
+
+        <!-- PANTALLA RESULTADO -->
+        <section id="screen-result" class="screen screen-hidden">
+            <div class="glass-card result-card zoom-in">
+                <div id="result-emoji" class="result-emoji">⌛</div>
+                <div id="result-label" class="result-badge">Calculando perfil...</div>
+                
+                <h1 id="result-title" class="result-title">...</h1>
+                <div class="score-display">
+                    Puntuación: <span id="score-text" class="score-highlight">0/24</span>
+                </div>
+                
+                <p id="result-desc" class="result-desc">...</p>
+                
+                <div class="cta-box">
+                    <h3 id="cta-title">Siguiente Paso</h3>
+                    <p id="cta-text">Cargando sugerencia...</p>
+                    
+                    <a id="btn-cta-primary" href="#" target="_blank" class="btn btn-primary btn-large btn-block mt-4">
+                        Agendar Reunión 📅
+                    </a>
+                </div>
+
+                <!-- LEAD CAPTURE (Inline) -->
+                <div id="lead-capture-form" class="lead-form-box mt-6">
+                    <h3>Recibí el reporte completo por email</h3>
+                    <p class="text-sm text-muted">Aprovechá más información sobre tu diagnóstico sin costo.</p>
+                    <form id="form-lead" class="form-grid">
+                        <input type="text" id="lead-name" placeholder="Tu Nombre *" required>
+                        <input type="email" id="lead-email" placeholder="Tu Email *" required>
+                        <select id="lead-industry" required>
+                            <option value="">Seleccioná tu Industria *</option>
+                            <option value="retail">Comercio / Retail</option>
+                            <option value="servicios">Servicios</option>
+                            <option value="manufactura">Manufactura / Producción</option>
+                            <option value="tech">Tecnología</option>
+                            <option value="agro">Agro</option>
+                            <option value="otro">Otro</option>
+                        </select>
+                        <input type="text" id="lead-company" placeholder="Nombre de tu empresa (Opcional)">
+                        <button type="submit" class="btn btn-secondary btn-block">Recibir Reporte Detallado</button>
+                    </form>
+                    <div id="form-success_msg" class="msg-success hidden">¡Gracias! Hemos guardado tus datos.</div>
+                </div>
+            </div>
+            
+            <div class="bg-gradient-result"></div>
+        </section>
+
+    </div>
+
+    <!-- Scripts (Modular pattern) -->
+    <script src="/js/api.js"></script>
+    <script src="/js/analytics.js"></script>
+    <script src="/js/scoring.js"></script>
+    <script src="/js/survey.js"></script>
+    <script src="/js/main.js"></script>
+</body>
+</html>

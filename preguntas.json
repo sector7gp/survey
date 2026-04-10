@@ -1,0 +1,111 @@
+{
+  "questions": [
+    {
+      "text": "¿Con qué frecuencia analizás los indicadores clave de tu empresa?",
+      "options": [
+        { "text": "Todos los días, es parte de mi rutina de gestión.", "points": 3 },
+        { "text": "Una o dos veces por semana.", "points": 2 },
+        { "text": "Solo cuando detecto problemas o a fin de mes.", "points": 1 },
+        { "text": "Casi nunca, no cuento con un proceso definido.", "points": 0 }
+      ]
+    },
+    {
+      "text": "¿Dónde se encuentran actualmente tus datos clave (ventas, caja, stock, etc.)?",
+      "options": [
+        { "text": "En un sistema o dashboard centralizado y automatizado.", "points": 3 },
+        { "text": "Distribuidos en varias herramientas (Excel, WhatsApp, sistemas, etc.).", "points": 2 },
+        { "text": "Dependen de cada responsable; hay que consultarlos individualmente.", "points": 1 },
+        { "text": "No existe un lugar definido para gestionarlos.", "points": 0 }
+      ]
+    },
+    {
+      "text": "Cuando ocurre un problema en la operación, ¿cuánto tardás en detectarlo?",
+      "options": [
+        { "text": "Casi en tiempo real, gracias a alertas o monitoreo continuo.", "points": 3 },
+        { "text": "En el transcurso del día.", "points": 2 },
+        { "text": "Después de varios días, cuando ya hay impacto visible.", "points": 1 },
+        { "text": "Semanas después, cuando ya es tarde para reaccionar.", "points": 0 }
+      ]
+    },
+    {
+      "text": "¿Cuánto tiempo dedica tu equipo a generar reportes o consolidar información?",
+      "options": [
+        { "text": "Menos de 1 hora semanal (proceso automatizado).", "points": 3 },
+        { "text": "Entre 1 y 3 horas semanales.", "points": 2 },
+        { "text": "Entre 3 y 8 horas semanales.", "points": 1 },
+        { "text": "Más de 8 horas o no se realiza de forma sistemática.", "points": 0 }
+      ]
+    },
+    {
+      "text": "¿Quiénes tienen acceso a los datos relevantes en tiempo real?",
+      "options": [
+        { "text": "Todo el equipo clave tiene acceso.", "points": 3 },
+        { "text": "Solo algunos miembros del equipo.", "points": 2 },
+        { "text": "Muy pocas personas concentran la información.", "points": 1 },
+        { "text": "No existe una visión compartida de los datos.", "points": 0 }
+      ]
+    },
+    {
+      "text": "Al tomar decisiones importantes, ¿en qué te basás principalmente?",
+      "options": [
+        { "text": "En datos actualizados con contexto e histórico.", "points": 3 },
+        { "text": "En datos disponibles, aunque no siempre actualizados.", "points": 2 },
+        { "text": "Principalmente en experiencia e intuición.", "points": 1 },
+        { "text": "En percepciones, sin respaldo de datos.", "points": 0 }
+      ]
+    },
+    {
+      "text": "¿Con qué frecuencia las decisiones se basan en datos desactualizados o incorrectos?",
+      "options": [
+        { "text": "Casi nunca, validamos la información previamente.", "points": 3 },
+        { "text": "Ocasionalmente.", "points": 2 },
+        { "text": "Más seguido de lo deseado.", "points": 1 },
+        { "text": "Es algo habitual en la empresa.", "points": 0 }
+      ]
+    },
+    {
+      "text": "¿Cuánto sentís que la falta de información clara y en tiempo real limita el crecimiento de tu empresa?",
+      "options": [
+        { "text": "Nada, tengo total visibilidad para crecer.", "points": 3 },
+        { "text": "Algo, pero no es un problema crítico.", "points": 2 },
+        { "text": "Bastante, me genera fricción en decisiones importantes.", "points": 1 },
+        { "text": "Mucho, siento que frena el crecimiento del negocio.", "points": 0 }
+      ]
+    }
+  ],
+  "profiles": {
+    "green": {
+      "emoji": "🟢",
+      "label": "Tu perfil",
+      "title": "Gestión Inteligente",
+      "scoreClass": "profile-green",
+      "desc": "Tenés una base sólida de gestión con datos: accedés a información confiable y tomás decisiones con criterio. Ya no estás en etapa de orden, sino de evolución. El próximo paso es pasar de entender lo que pasó a anticiparte a lo que va a pasar.",
+      "ctaTitle": "Es momento de dar el salto a lo predictivo",
+      "ctaText": "Con TablerosVivos podés evolucionar tus datos hacia automatización avanzada e inteligencia aplicada, para anticiparte y escalar con mayor precisión.",
+      "ctaBtn": "Quiero llevar mis datos al siguiente nivel →",
+      "ctaLink": "https://www.tablerosvivos.com/home"
+    },
+    "yellow": {
+      "emoji": "🟡",
+      "label": "Tu perfil",
+      "title": "Gestión en Transición",
+      "scoreClass": "profile-yellow",
+      "desc": "Tenés acceso a datos, pero con fricción: están dispersos, llegan tarde o requieren esfuerzo manual. Esto impacta directamente en tu velocidad de decisión y en la eficiencia del equipo.",
+      "ctaTitle": "Reducí fricción y ganá velocidad",
+      "ctaText": "Centralizar y automatizar tu información puede devolverte horas por semana y mejorar la calidad de tus decisiones en muy poco tiempo.",
+      "ctaBtn": "Quiero ordenar y automatizar mis datos →",
+      "ctaLink": "https://www.tablerosvivos.com/home"
+    },
+    "red": {
+      "emoji": "🔴",
+      "label": "Tu perfil",
+      "title": "Gestión Reactiva",
+      "scoreClass": "profile-red",
+      "desc": "Hoy operás con baja visibilidad sobre tu negocio. La información no está disponible cuando la necesitás, lo que te obliga a reaccionar tarde y asumir riesgos innecesarios.",
+      "ctaTitle": "Ganar visibilidad es urgente",
+      "ctaText": "Contar con datos claros y en tiempo real no es un lujo: es una condición necesaria para tomar decisiones y sostener el crecimiento.",
+      "ctaBtn": "Quiero empezar a ordenar mis datos →",
+      "ctaLink": "https://www.tablerosvivos.com/home"
+    }
+  }
+}
