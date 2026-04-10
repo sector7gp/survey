@@ -13,7 +13,7 @@ const Analytics = {
         
         // Push to backend asynchronously
         if (window.API) {
-            window.API.trackEvent(eventType, payload);
+            window.API.trackEvent(eventType, payload, data.lead_id);
         }
     },
 
@@ -31,8 +31,8 @@ const Analytics = {
         this.logEvent('survey_completed', { score, profileCode, timeSpentSeconds: timeSpent });
     },
 
-    ctaClicked(ctaType, link) {
-        this.logEvent('cta_clicked', { cta_type: ctaType, link });
+    ctaClicked(ctaType, link, leadId = null) {
+        this.logEvent('cta_clicked', { cta_type: ctaType, link, lead_id: leadId });
     },
 
     leadSubmitted(leadId) {

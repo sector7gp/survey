@@ -93,6 +93,7 @@ const Admin = {
             const tr = document.createElement('tr');
             const profile = lead.score_data ? lead.score_data.profile : 'N/A';
             const score = lead.score_data ? lead.score_data.score : '-';
+            const clickedCta = lead.clicked_cta ? '✅' : '❌';
             
             tr.innerHTML = `
                 <td>${new Date(lead.fecha).toLocaleDateString()}</td>
@@ -101,6 +102,7 @@ const Admin = {
                 <td>${lead.empresa || '-'}</td>
                 <td><span class="badge-profile ${profile}">${profile.toUpperCase()}</span></td>
                 <td>${score} / 24</td>
+                <td style="text-align:center">${clickedCta}</td>
             `;
             body.appendChild(tr);
         });

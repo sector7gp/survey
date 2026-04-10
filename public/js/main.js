@@ -12,6 +12,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     let envConfig = null;
     let finalScore = 0;
     let finalProfileCode = 'red';
+    let currentLeadId = sessionStorage.getItem('current_lead_id');
 
     // 1. Init App
     async function init() {
@@ -90,7 +91,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         btnCtaPrimary.href = agendaLink;
 
         btnCtaPrimary.addEventListener('click', () => {
-            window.Analytics.ctaClicked('primary', agendaLink);
+            window.Analytics.ctaClicked('primary', agendaLink, currentLeadId);
         });
     }
 
@@ -115,6 +116,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         const result = await window.API.saveLead(payload);
         
         if (result.success) {
+            currentLeadId = result.lead_id;
+            sessionStorage.setItem('current_lead_id', currentLeadId);
+            
             formLead.classList.add('hidden');
             formSuccessMsg.classList.remove('hidden');
             window.Analytics.leadSubmitted(result.lead_id);

@@ -43,12 +43,12 @@ const API = {
         }
     },
 
-    async trackEvent(eventType, data) {
+    async trackEvent(eventType, data, lead_id = null) {
         try {
             await fetch(`${this.baseURL}/analytics`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ event_type: eventType, data })
+                body: JSON.stringify({ event_type: eventType, data, lead_id })
             });
         } catch (e) {
             console.warn("Analytics not tracked via API", eventType);
