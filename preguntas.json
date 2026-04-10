@@ -81,9 +81,9 @@
       "scoreClass": "profile-green",
       "desc": "Tenés una base sólida de gestión con datos: accedés a información confiable y tomás decisiones con criterio. Ya no estás en etapa de orden, sino de evolución. El próximo paso es pasar de entender lo que pasó a anticiparte a lo que va a pasar.",
       "ctaTitle": "Es momento de dar el salto a lo predictivo",
-      "ctaText": "Con TablerosVivos podés evolucionar tus datos hacia automatización avanzada e inteligencia aplicada, para anticiparte y escalar con mayor precisión.",
+      "ctaText": "Podés evolucionar tus datos hacia automatización avanzada e inteligencia aplicada, para anticiparte y escalar con mayor precisión.",
       "ctaBtn": "Quiero llevar mis datos al siguiente nivel →",
-      "ctaLink": "https://www.tablerosvivos.com/home"
+      "ctaLink": "https://calendar.app.google/MVb6cbu5iAAZ1SG1A"
     },
     "yellow": {
       "emoji": "🟡",
@@ -94,7 +94,7 @@
       "ctaTitle": "Reducí fricción y ganá velocidad",
       "ctaText": "Centralizar y automatizar tu información puede devolverte horas por semana y mejorar la calidad de tus decisiones en muy poco tiempo.",
       "ctaBtn": "Quiero ordenar y automatizar mis datos →",
-      "ctaLink": "https://www.tablerosvivos.com/home"
+      "ctaLink": "https://calendar.app.google/MVb6cbu5iAAZ1SG1A"
     },
     "red": {
       "emoji": "🔴",
@@ -105,7 +105,7 @@
       "ctaTitle": "Ganar visibilidad es urgente",
       "ctaText": "Contar con datos claros y en tiempo real no es un lujo: es una condición necesaria para tomar decisiones y sostener el crecimiento.",
       "ctaBtn": "Quiero empezar a ordenar mis datos →",
-      "ctaLink": "https://www.tablerosvivos.com/home"
+      "ctaLink": "https://calendar.app.google/MVb6cbu5iAAZ1SG1A"
     }
   }
 }
