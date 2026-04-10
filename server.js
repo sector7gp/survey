@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
@@ -57,6 +58,18 @@ const apiLimiter = rateLimit({
   message: { error: 'Demasiadas solicitudes del mismo IP, intente luego.' }
 });
 app.use('/api/', apiLimiter);
+
+// Middleware de Autenticación Admin
+const checkAdmin = (req, res, next) => {
+  const token = req.headers['x-admin-token'];
+  const password = process.env.ADMIN_PASSWORD || 'admin123';
+  
+  if (token === password) {
+    next();
+  } else {
+    res.status(401).json({ success: false, error: 'No autorizado' });
+  }
+};
 
 // --- RUTAS ---
 
@@ -121,6 +134,63 @@ app.post('/api/analytics', (req, res) => {
       return res.status(500).json({ success: false });
     }
     res.status(201).json({ success: true });
+  });
+});
+
+// --- RUTAS ADMIN ---
+
+// Validar Password (Login)
+app.post('/api/admin/login', (req, res) => {
+  const { password } = req.body;
+  if (password === (process.env.ADMIN_PASSWORD || 'admin123')) {
+    res.json({ success: true });
+  } else {
+    res.status(401).json({ success: false });
+  }
+});
+
+// Obtener Resultados (Leads + Score)
+app.get('/api/admin/results', checkAdmin, (req, res) => {
+  const sql = `
+    SELECT l.*, a.data as score_data 
+    FROM leads l 
+    LEFT JOIN analytics a ON l.id = a.lead_id AND a.event_type = 'lead_submitted'
+    ORDER BY l.fecha DESC
+  `;
+  db.all(sql, [], (err, rows) => {
+    if (err) return res.status(500).json({ success: false, error: err.message });
+    
+    // Parsear el JSON de score_data
+    const results = rows.map(row => ({
+      ...row,
+      score_data: row.score_data ? JSON.parse(row.score_data) : null
+    }));
+    
+    res.json({ success: true, data: results });
+  });
+});
+
+// Estadísticas Rápidas
+app.get('/api/admin/stats', checkAdmin, (req, res) => {
+  const sqlStats = `
+    SELECT 
+      COUNT(*) as total_leads,
+      (SELECT COUNT(*) FROM analytics WHERE event_type = 'survey_started') as total_started
+    FROM leads
+  `;
+  db.get(sqlStats, [], (err, stats) => {
+    if (err) return res.status(500).json({ success: false });
+    
+    // Distribución de perfiles desde analytics
+    db.all("SELECT data FROM analytics WHERE event_type = 'lead_submitted'", [], (err, rows) => {
+      const distribution = { red: 0, yellow: 0, green: 0 };
+      rows.forEach(r => {
+        const d = JSON.parse(r.data);
+        if (d.profile && distribution[d.profile] !== undefined) distribution[d.profile]++;
+      });
+      
+      res.json({ success: true, stats: { ...stats, profile_distribution: distribution } });
+    });
   });
 });
 

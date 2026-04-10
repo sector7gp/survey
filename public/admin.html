@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Admin - Encuesta Madurez Digital</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body class="admin-body">
+    
+    <div id="login-screen" class="screen screen-active">
+        <div class="glass-card login-card slide-up">
+            <h1 class="text-center">Acceso Admin</h1>
+            <p class="text-center text-secondary mb-6">Ingresá la clave de administrador</p>
+            <form id="form-login">
+                <input type="password" id="admin-pass" placeholder="Password" required>
+                <button type="submit" class="btn btn-primary btn-block mt-4">Entrar al Panel</button>
+            </form>
+            <p id="login-error" class="hidden text-red text-center mt-2">Clave incorrecta</p>
+        </div>
+    </div>
+
+    <div id="dashboard-screen" class="screen screen-hidden">
+        <header class="admin-header">
+            <div class="header-content">
+                <h1>Dashboard de Resultados</h1>
+                <button id="btn-logout" class="btn btn-outline">Cerrar Sesión</button>
+            </div>
+        </header>
+
+        <main class="admin-main">
+            <!-- Stats Grid -->
+            <div class="stats-grid">
+                <div class="stat-card glass-card">
+                    <span class="stat-label">Leads Totales</span>
+                    <span id="stat-leads" class="stat-value">0</span>
+                </div>
+                <div class="stat-card glass-card">
+                    <span class="stat-label">Iniciaron Encuesta</span>
+                    <span id="stat-started" class="stat-value">0</span>
+                </div>
+                <div class="stat-card glass-card">
+                    <span class="stat-label">Perfiles</span>
+                    <div class="profile-distribution">
+                        <span class="p-red"><span id="dist-red">0</span>🔴</span>
+                        <span class="p-yellow"><span id="dist-yellow">0</span>🟡</span>
+                        <span class="p-green"><span id="dist-green">0</span>🟢</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Leads Table Section -->
+            <div class="glass-card table-section mt-6">
+                <div class="table-header">
+                    <h2>Últimos Leads</h2>
+                    <button id="btn-export" class="btn btn-secondary">Exportar CSV 📥</button>
+                </div>
+                <div class="table-wrapper">
+                    <table id="leads-table">
+                        <thead>
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Nombre</th>
+                                <th>Email</th>
+                                <th>Empresa</th>
+                                <th>Perfil</th>
+                                <th>Score</th>
+                            </tr>
+                        </thead>
+                        <tbody id="leads-body">
+                            <!-- Datos dinámicos -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="/js/admin.js"></script>
+</body>
+</html>
