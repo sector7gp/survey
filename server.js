@@ -104,6 +104,7 @@ function initDb() {
 }
 
 // Middleware
+app.set('trust proxy', 1); // Confía en proxies (Nginx, Vercel, etc.)
 app.use(helmet());
 app.use(cors());
 app.use(express.json());
@@ -252,6 +253,25 @@ app.get('/api/admin/stats', checkAdmin, (req, res) => {
       });
       
       res.json({ success: true, stats: { ...stats, profile_distribution: distribution } });
+    });
+  });
+});
+
+// Eliminar Lead (Físico)
+app.delete('/api/admin/leads/:id', checkAdmin, (req, res) => {
+  const { id } = req.params;
+  
+  // Usamos una transacción simple: Borramos analytics y luego el lead
+  db.serialize(() => {
+    db.run('DELETE FROM analytics WHERE lead_id = ?', [id], (err) => {
+      if (err) console.error("Error deleting analytics:", err.message);
+    });
+    
+    db.run('DELETE FROM leads WHERE id = ?', [id], function(err) {
+      if (err) {
+        return res.status(500).json({ success: false, error: err.message });
+      }
+      res.json({ success: true, changes: this.changes });
     });
   });
 });

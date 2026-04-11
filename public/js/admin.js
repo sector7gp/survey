@@ -113,17 +113,45 @@ const Admin = {
                 <td>${score} / 24</td>
                 <td style="text-align:center">${clickedCta}</td>
                 <td><button class="btn btn-outline btn-sm btn-view-detail" data-id="${lead.id}">👁️ Detalle</button></td>
+                <td><button class="btn btn-outline btn-sm btn-delete-lead text-red" data-id="${lead.id}">🗑️ Borrar</button></td>
             `;
             body.appendChild(tr);
         });
 
-        // Event delegation para los botones de detalle (Evita errores de CSP)
+        // Event delegation para botones de detalle
         body.querySelectorAll('.btn-view-detail').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 const id = parseInt(e.currentTarget.getAttribute('data-id'));
                 this.openDetails(id);
             });
         });
+
+        // Event delegation para botones de eliminar
+        body.querySelectorAll('.btn-delete-lead').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const id = parseInt(e.currentTarget.getAttribute('data-id'));
+                this.deleteLead(id);
+            });
+        });
+    },
+
+    async deleteLead(id) {
+        if (!confirm("¿Estás seguro de que deseas eliminar este registro permanentemente? (Se borrará el lead y todas sus respuestas)")) return;
+
+        try {
+            const resp = await fetch(`/api/admin/leads/${id}`, {
+                method: 'DELETE',
+                headers: { 'x-admin-token': this.token }
+            });
+
+            if (resp.ok) {
+                this.loadData(); // Refrescar tabla y stats
+            } else {
+                alert("Error al eliminar el registro.");
+            }
+        } catch (err) {
+            console.error(err);
+        }
     },
 
     openDetails(id) {
