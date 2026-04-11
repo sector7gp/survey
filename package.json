@@ -1,5 +1,5 @@
 {
-  "name": "survey-backend",
+  "name": "survey",
   "version": "1.0.0",
   "description": "Backend for Nucleo Digital SME Survey",
   "main": "server.js",
