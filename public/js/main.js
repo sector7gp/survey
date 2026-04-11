@@ -16,7 +16,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     let finalScore = 0;
     let finalProfileCode = 'red';
     let currentLeadId = sessionStorage.getItem('current_lead_id');
-    let surveyAnswers = []; // Para persistir detalladamente
+    let surveyAnswers = []; 
+    let userData = {
+        nombre: sessionStorage.getItem('lead_nombre') || '',
+        email: sessionStorage.getItem('lead_email') || ''
+    };
 
     // 1. Init App
     async function init() {
@@ -95,6 +99,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (result.success) {
             currentLeadId = result.lead_id;
             sessionStorage.setItem('current_lead_id', currentLeadId);
+            sessionStorage.setItem('lead_nombre', payload.nombre);
+            sessionStorage.setItem('lead_email', payload.email);
+            userData.nombre = payload.nombre;
+            userData.email = payload.email;
+
             window.Analytics.leadSubmitted(result.lead_id);
             switchScreen(screenInterstitial, screenResult);
         } else {
@@ -142,6 +151,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         const btnCtaPrimary = document.getElementById('btn-cta-primary');
         btnCtaPrimary.textContent = profile.ctaBtn || "Agendar Reunión";
         
+        // Pre-completar el form final si ya tenemos los datos
+        if (userData.nombre) document.getElementById('lead-name').value = userData.nombre;
+        if (userData.email) document.getElementById('lead-email').value = userData.email;
+
         // La URL viene de la constante del prompt o del JSON. Priority: JSON
         const agendaLink = profile.ctaLink || "https://calendar.app.google/MVb6cbu5iAAZ1SG1A";
         btnCtaPrimary.href = agendaLink;
