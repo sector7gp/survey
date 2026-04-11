@@ -159,9 +159,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         const agendaLink = profile.ctaLink || "https://calendar.app.google/MVb6cbu5iAAZ1SG1A";
         btnCtaPrimary.href = agendaLink;
 
-        btnCtaPrimary.addEventListener('click', () => {
-            window.Analytics.ctaClicked('primary', agendaLink, currentLeadId);
-        });
+        // Usamos onclick para evitar duplicados y capturar el currentLeadId actualizado al momento del click
+        btnCtaPrimary.onclick = () => {
+             console.log("Tracking CTA click for lead:", currentLeadId);
+             window.Analytics.ctaClicked('primary', agendaLink, currentLeadId);
+        };
     }
 
     // 6. Enviar Formulario de Lead
