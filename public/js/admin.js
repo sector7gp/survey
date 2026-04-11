@@ -102,6 +102,7 @@ const Admin = {
             // Asegurar que profile y score tengan valores por defecto seguros
             const profile = (lead.score_data && lead.score_data.profile) ? lead.score_data.profile : 'N/A';
             const score = (lead.score_data && lead.score_data.score !== undefined) ? lead.score_data.score : '-';
+            const requestedReport = lead.score_data ? '✅' : '❌';
             const clickedCta = lead.clicked_cta ? '✅' : '❌';
             
             tr.innerHTML = `
@@ -111,6 +112,7 @@ const Admin = {
                 <td>${lead.rubro || '-'}</td>
                 <td><span class="badge-profile ${profile}">${String(profile).toUpperCase()}</span></td>
                 <td>${score} / 24</td>
+                <td style="text-align:center">${requestedReport}</td>
                 <td style="text-align:center">${clickedCta}</td>
                 <td><button class="btn btn-outline btn-sm btn-view-detail" data-id="${lead.id}">👁️ Detalle</button></td>
                 <td><button class="btn btn-outline btn-sm btn-delete-lead text-red" data-id="${lead.id}">🗑️ Borrar</button></td>

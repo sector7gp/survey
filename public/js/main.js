@@ -104,6 +104,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             userData.nombre = payload.nombre;
             userData.email = payload.email;
 
+            // Actualizar campos en el formulario final inmediatamente
+            document.getElementById('lead-name').value = userData.nombre;
+            document.getElementById('lead-email').value = userData.email;
+
             window.Analytics.leadSubmitted(result.lead_id);
             switchScreen(screenInterstitial, screenResult);
         } else {
