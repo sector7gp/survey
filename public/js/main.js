@@ -82,8 +82,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         const payload = {
             nombre: document.getElementById('int-name').value,
             email: document.getElementById('int-email').value,
-            rubro: document.getElementById('int-industry').value,
-            empresa: document.getElementById('int-company').value,
+            rubro: "Pendiente",
+            empresa: "Pendiente",
             scoreData: {
                 score: finalScore,
                 profile: finalProfileCode,
@@ -163,10 +163,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         btnSubmit.textContent = "Enviando...";
 
         const payload = {
-            nombre: "Lead Post-Resultado", // Identificador genérico si no lo teniamos
+            nombre: document.getElementById('lead-name').value,
             email: document.getElementById('lead-email').value,
-            rubro: "N/A",
-            empresa: "",
+            rubro: document.getElementById('lead-industry').value,
+            empresa: document.getElementById('lead-company').value,
             scoreData: {
                 score: finalScore,
                 profile: finalProfileCode,
