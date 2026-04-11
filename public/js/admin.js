@@ -114,8 +114,8 @@ const Admin = {
                 <td>${score} / 24</td>
                 <td style="text-align:center">${requestedReport}</td>
                 <td style="text-align:center">${clickedCta}</td>
-                <td><button class="btn btn-outline btn-sm btn-view-detail" data-id="${lead.id}">👁️ Detalle</button></td>
-                <td><button class="btn btn-outline btn-sm btn-delete-lead text-red" data-id="${lead.id}">🗑️ Borrar</button></td>
+                <td><button class="btn btn-outline btn-sm btn-view-detail" data-id="${lead.id}" title="Ver Detalle">👁️</button></td>
+                <td><button class="btn btn-outline btn-sm btn-delete-lead text-red" data-id="${lead.id}" title="Borrar Registro">🗑️</button></td>
             `;
             body.appendChild(tr);
         });
