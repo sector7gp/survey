@@ -99,8 +99,9 @@ const Admin = {
         
         data.forEach(lead => {
             const tr = document.createElement('tr');
-            const profile = lead.score_data ? lead.score_data.profile : 'N/A';
-            const score = lead.score_data ? lead.score_data.score : '-';
+            // Asegurar que profile y score tengan valores por defecto seguros
+            const profile = (lead.score_data && lead.score_data.profile) ? lead.score_data.profile : 'N/A';
+            const score = (lead.score_data && lead.score_data.score !== undefined) ? lead.score_data.score : '-';
             const clickedCta = lead.clicked_cta ? '✅' : '❌';
             
             tr.innerHTML = `
@@ -108,12 +109,20 @@ const Admin = {
                 <td><strong>${lead.nombre}</strong></td>
                 <td>${lead.email}</td>
                 <td>${lead.rubro || '-'}</td>
-                <td><span class="badge-profile ${profile}">${profile.toUpperCase()}</span></td>
+                <td><span class="badge-profile ${profile}">${String(profile).toUpperCase()}</span></td>
                 <td>${score} / 24</td>
                 <td style="text-align:center">${clickedCta}</td>
-                <td><button class="btn btn-outline btn-sm" onclick="Admin.openDetails(${lead.id})">👁️ Detalle</button></td>
+                <td><button class="btn btn-outline btn-sm btn-view-detail" data-id="${lead.id}">👁️ Detalle</button></td>
             `;
             body.appendChild(tr);
+        });
+
+        // Event delegation para los botones de detalle (Evita errores de CSP)
+        body.querySelectorAll('.btn-view-detail').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const id = parseInt(e.currentTarget.getAttribute('data-id'));
+                this.openDetails(id);
+            });
         });
     },
 
