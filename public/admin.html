@@ -57,7 +57,10 @@
             <div class="glass-card table-section mt-6">
                 <div class="table-header">
                     <h2>Últimos Leads</h2>
-                    <button id="btn-export" class="btn btn-secondary">Exportar CSV 📥</button>
+                    <div class="header-actions">
+                        <button id="btn-refresh" class="btn btn-outline mr-2">Actualizar ↻</button>
+                        <button id="btn-export" class="btn btn-secondary">Exportar CSV 📥</button>
+                    </div>
                 </div>
                 <div class="table-wrapper">
                     <table id="leads-table">
@@ -69,9 +72,11 @@
                                 <th>Empresa</th>
                                 <th>Perfil</th>
                                 <th>Score</th>
-                                <th>Click Calendario</th>
+                                <th>Calendario</th>
+                                <th>Detalle</th>
                             </tr>
                         </thead>
+
                         <tbody id="leads-body">
                             <!-- Datos dinámicos -->
                         </tbody>
@@ -79,6 +84,23 @@
                 </div>
             </div>
         </main>
+    </div>
+
+    <!-- MODAL DETALLES -->
+    <div id="modal-details" class="modal-overlay hidden">
+        <div class="modal-content glass-card zoom-in">
+            <div class="modal-header">
+                <h3>Detalle de Respuestas</h3>
+                <button id="btn-close-modal" class="btn-close">&times;</button>
+            </div>
+            <div class="modal-user-info">
+                <p><strong>Usuario:</strong> <span id="md-name">-</span></p>
+                <p><strong>Email:</strong> <span id="md-email">-</span></p>
+            </div>
+            <div id="answers-list" class="answers-list">
+                <!-- Se llena por JS -->
+            </div>
+        </div>
     </div>
 
     <script src="/js/admin.js"></script>

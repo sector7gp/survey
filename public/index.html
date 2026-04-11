@@ -54,6 +54,32 @@
             </div>
         </section>
 
+        <!-- PANTALLA INTERSTICIAL (PRE-RESULTADO) -->
+        <section id="screen-interstitial" class="screen screen-hidden">
+            <div class="glass-card slide-up">
+                <h2 class="text-center mb-4">¿Querés recibir tu diagnóstico completo con recomendaciones concretas para mejorar tu gestión?</h2>
+                <form id="form-interstitial" class="form-grid">
+                    <input type="text" id="int-name" placeholder="Tu Nombre *" required>
+                    <input type="email" id="int-email" placeholder="Tu Email *" required>
+                    <select id="int-industry" required>
+                        <option value="">Seleccioná tu Industria *</option>
+                        <option value="retail">Comercio / Retail</option>
+                        <option value="servicios">Servicios</option>
+                        <option value="manufactura">Manufactura / Producción</option>
+                        <option value="tech">Tecnología</option>
+                        <option value="agro">Agro</option>
+                        <option value="otro">Otro</option>
+                    </select>
+                    <input type="text" id="int-company" placeholder="Nombre de tu empresa (Opcional)">
+                    <button type="submit" class="btn btn-primary btn-block">Enviar mi informe</button>
+                </form>
+                <div class="text-center mt-4">
+                    <button id="btn-skip-lead" class="btn btn-outline btn-block">Ver resultado ahora (sin informe)</button>
+                </div>
+            </div>
+            <div class="bg-gradient"></div>
+        </section>
+
         <!-- PANTALLA RESULTADO -->
         <section id="screen-result" class="screen screen-hidden">
             <div class="glass-card result-card zoom-in">
@@ -78,21 +104,10 @@
 
                 <!-- LEAD CAPTURE (Inline) -->
                 <div id="lead-capture-form" class="lead-form-box mt-6">
-                    <h3>Recibí el reporte completo por email</h3>
-                    <p class="text-sm text-muted">Aprovechá más información sobre tu diagnóstico sin costo.</p>
+                    <h3>Te vamos a generar un diagnóstico personalizado para tu empresa.</h3>
+                    <p class="text-sm text-muted">¿A qué email te lo enviamos?</p>
                     <form id="form-lead" class="form-grid">
-                        <input type="text" id="lead-name" placeholder="Tu Nombre *" required>
                         <input type="email" id="lead-email" placeholder="Tu Email *" required>
-                        <select id="lead-industry" required>
-                            <option value="">Seleccioná tu Industria *</option>
-                            <option value="retail">Comercio / Retail</option>
-                            <option value="servicios">Servicios</option>
-                            <option value="manufactura">Manufactura / Producción</option>
-                            <option value="tech">Tecnología</option>
-                            <option value="agro">Agro</option>
-                            <option value="otro">Otro</option>
-                        </select>
-                        <input type="text" id="lead-company" placeholder="Nombre de tu empresa (Opcional)">
                         <button type="submit" class="btn btn-secondary btn-block">Recibir Reporte Detallado</button>
                     </form>
                     <div id="form-success_msg" class="msg-success hidden">¡Gracias! Hemos guardado tus datos.</div>

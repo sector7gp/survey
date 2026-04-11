@@ -6,6 +6,7 @@ const Admin = {
         login: document.getElementById('login-screen'),
         dashboard: document.getElementById('dashboard-screen')
     },
+    modal: document.getElementById('modal-details'),
     
     init() {
         this.bindEvents();
@@ -18,6 +19,13 @@ const Admin = {
         document.getElementById('form-login').addEventListener('submit', (e) => this.handleLogin(e));
         document.getElementById('btn-logout').addEventListener('click', () => this.handleLogout());
         document.getElementById('btn-export').addEventListener('click', () => this.exportCSV());
+        document.getElementById('btn-refresh').addEventListener('click', () => this.loadData());
+        document.getElementById('btn-close-modal').addEventListener('click', () => this.closeModal());
+        
+        // Cerrar modal al clickear afuera
+        window.addEventListener('click', (e) => {
+            if (e.target === this.modal) this.closeModal();
+        });
     },
 
     async handleLogin(e) {
@@ -99,13 +107,46 @@ const Admin = {
                 <td>${new Date(lead.fecha).toLocaleDateString()}</td>
                 <td><strong>${lead.nombre}</strong></td>
                 <td>${lead.email}</td>
-                <td>${lead.empresa || '-'}</td>
+                <td>${lead.rubro || '-'}</td>
                 <td><span class="badge-profile ${profile}">${profile.toUpperCase()}</span></td>
                 <td>${score} / 24</td>
                 <td style="text-align:center">${clickedCta}</td>
+                <td><button class="btn btn-outline btn-sm" onclick="Admin.openDetails(${lead.id})">👁️ Detalle</button></td>
             `;
             body.appendChild(tr);
         });
+    },
+
+    openDetails(id) {
+        const lead = this.resultsData.find(l => l.id === id);
+        if (!lead || !lead.score_data) return;
+
+        document.getElementById('md-name').textContent = lead.nombre;
+        document.getElementById('md-email').textContent = lead.email;
+        
+        const list = document.getElementById('answers-list');
+        list.innerHTML = '';
+
+        const answers = lead.score_data.detailedAnswers || [];
+        if (answers.length === 0) {
+            list.innerHTML = '<p class="text-muted">No hay detalles de respuestas disponibles para este registro.</p>';
+        } else {
+            answers.forEach(a => {
+                const item = document.createElement('div');
+                item.className = 'answer-item';
+                item.innerHTML = `
+                    <div class="ans-q">${a.question}</div>
+                    <div class="ans-a">${a.answer}</div>
+                `;
+                list.appendChild(item);
+            });
+        }
+
+        this.modal.classList.remove('hidden');
+    },
+
+    closeModal() {
+        this.modal.classList.add('hidden');
     },
 
     exportCSV() {

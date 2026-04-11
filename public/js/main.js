@@ -2,9 +2,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Referencias DOM
     const screenIntro = document.getElementById('screen-intro');
     const screenSurvey = document.getElementById('screen-survey');
+    const screenInterstitial = document.getElementById('screen-interstitial');
     const screenResult = document.getElementById('screen-result');
     
     const btnStart = document.getElementById('btn-start');
+    const btnSkipLead = document.getElementById('btn-skip-lead');
+    const formInterstitial = document.getElementById('form-interstitial');
     const formLead = document.getElementById('form-lead');
     const formSuccessMsg = document.getElementById('form-success_msg');
     
@@ -13,6 +16,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     let finalScore = 0;
     let finalProfileCode = 'red';
     let currentLeadId = sessionStorage.getItem('current_lead_id');
+    let surveyAnswers = []; // Para persistir detalladamente
 
     // 1. Init App
     async function init() {
@@ -52,14 +56,70 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // 4. Completar Encuesta
     function handleSurveyComplete(answers) {
+        surveyAnswers = answers; // Guardamos las respuestas detalladas
         finalScore = window.Scoring.calculateScore(answers);
         finalProfileCode = window.Scoring.getProfile(finalScore);
         
         window.Analytics.surveyCompleted(finalScore, finalProfileCode);
         
         renderResults(finalScore, finalProfileCode);
-        switchScreen(screenSurvey, screenResult);
+        
+        // Si ya tenemos Lead ID de una sesion previa, saltamos a resultados, sino a Intersticial
+        if (currentLeadId) {
+            switchScreen(screenSurvey, screenResult);
+        } else {
+            switchScreen(screenSurvey, screenInterstitial);
+        }
     }
+
+    // Eventos Intersticial
+    formInterstitial.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const btnSubmit = formInterstitial.querySelector('button[type="submit"]');
+        btnSubmit.disabled = true;
+        btnSubmit.textContent = "Generando informe...";
+
+        const payload = {
+            nombre: document.getElementById('int-name').value,
+            email: document.getElementById('int-email').value,
+            rubro: document.getElementById('int-industry').value,
+            empresa: document.getElementById('int-company').value,
+            scoreData: {
+                score: finalScore,
+                profile: finalProfileCode,
+                detailedAnswers: surveyAnswers.map((a, i) => ({
+                    question: envConfig.questions[i].text,
+                    answer: a.text,
+                    points: a.points
+                }))
+            }
+        };
+
+        const result = await window.API.saveLead(payload);
+        if (result.success) {
+            currentLeadId = result.lead_id;
+            sessionStorage.setItem('current_lead_id', currentLeadId);
+            window.Analytics.leadSubmitted(result.lead_id);
+            switchScreen(screenInterstitial, screenResult);
+        } else {
+            alert("Error guardando datos.");
+            btnSubmit.disabled = false;
+        }
+    });
+
+    btnSkipLead.addEventListener('click', () => {
+        // Guardar respuestas de forma anónima/sesión antes de mostrar resultado
+        window.API.trackEvent('survey_finished_anonymous', { 
+            score: finalScore, 
+            profile: finalProfileCode,
+            detailedAnswers: surveyAnswers.map((a, i) => ({
+                question: envConfig.questions[i].text,
+                answer: a.text,
+                points: a.points
+            }))
+        });
+        switchScreen(screenInterstitial, screenResult);
+    });
 
     // 5. Render de Resultados
     function renderResults(score, profileCode) {
@@ -103,13 +163,18 @@ document.addEventListener('DOMContentLoaded', async () => {
         btnSubmit.textContent = "Enviando...";
 
         const payload = {
-            nombre: document.getElementById('lead-name').value,
+            nombre: "Lead Post-Resultado", // Identificador genérico si no lo teniamos
             email: document.getElementById('lead-email').value,
-            rubro: document.getElementById('lead-industry').value,
-            empresa: document.getElementById('lead-company').value,
+            rubro: "N/A",
+            empresa: "",
             scoreData: {
                 score: finalScore,
-                profile: finalProfileCode
+                profile: finalProfileCode,
+                detailedAnswers: surveyAnswers.map((a, i) => ({
+                    question: envConfig.questions[i].text,
+                    answer: a.text,
+                    points: a.points
+                }))
             }
         };
 

@@ -60,7 +60,7 @@ async function sendReportEmail(leadData, scoreData) {
       </div>
       
       <p style="margin-top: 40px; font-size: 0.8rem; color: #9ca3af;">
-        Enviado automáticamente por el Sistema de Diagnóstico Digital.
+        Pablo Gon | Facilitador Tecnologico
       </p>
     </div>
   `;
