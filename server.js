@@ -152,38 +152,50 @@ app.get('/api/config', (req, res) => {
   }
 });
 
-// Guardar Lead
+// Guardar o Actualizar Lead
 app.post('/api/leads', (req, res) => {
   const { nombre, email, rubro, empresa, scoreData } = req.body;
-  if (!nombre || !email || !rubro) {
-    return res.status(400).json({ success: false, error: 'Faltan datos obligatorios' });
-  }
+  if (!email) return res.status(400).json({ success: false, error: 'Email obligatorio' });
 
-  const sql = 'INSERT INTO leads (nombre, email, rubro, empresa) VALUES (?, ?, ?, ?)';
-  const params = [nombre, email, rubro, empresa || ''];
+  // 1. Buscar si ya existe el lead
+  db.get('SELECT id FROM leads WHERE email = ?', [email], (err, row) => {
+    if (err) return res.status(500).json({ success: false });
 
-  db.run(sql, params, function (err) {
-    if (err) {
-      console.error("Error inserting lead:", err.message);
-      return res.status(500).json({ success: false, error: 'Error interno guardando form' });
+    if (row) {
+      // 2. Si existe, ACTUALIZAR
+      const leadId = row.id;
+      const updateSql = 'UPDATE leads SET nombre = ?, rubro = ?, empresa = ? WHERE id = ?';
+      db.run(updateSql, [nombre, rubro, empresa, leadId], (err) => {
+        if (err) console.error("Error updating lead:", err.message);
+        handleScoreData(leadId, scoreData, { nombre, email }, res);
+      });
+    } else {
+      // 3. Si no existe, INSERTAR
+      const insertSql = 'INSERT INTO leads (nombre, email, rubro, empresa) VALUES (?, ?, ?, ?)';
+      db.run(insertSql, [nombre, email, rubro, empresa || ''], function (err) {
+        if (err) return res.status(500).json({ success: false });
+        handleScoreData(this.lastID, scoreData, { nombre, email }, res);
+      });
     }
+  });
+});
 
-    const leadId = this.lastID;
-
-    // Si viene scoreData, lo guardamos en analytics y disparamos email
-    if (scoreData) {
+// Función auxiliar para manejar analytics y email
+function handleScoreData(leadId, scoreData, userData, res) {
+  if (scoreData) {
+    // Borrar analytics previos de tipo lead_submitted para este lead (evita duplicados en la tabla admin)
+    db.run('DELETE FROM analytics WHERE lead_id = ? AND event_type = "lead_submitted"', [leadId], () => {
       const analyticsSql = 'INSERT INTO analytics (event_type, lead_id, data) VALUES (?, ?, ?)';
       db.run(analyticsSql, ['lead_submitted', leadId, JSON.stringify(scoreData)], (err) => {
         if (err) console.error("Error logging lead analytics:", err.message);
       });
+    });
 
-      // Enviar Email (Asincrónico, no bloquea respuesta)
-      sendReportEmail({ nombre, email }, scoreData);
-    }
-    
-    res.status(201).json({ success: true, lead_id: leadId });
-  });
-});
+    // Enviar Email
+    sendReportEmail(userData, scoreData);
+  }
+  res.status(201).json({ success: true, lead_id: leadId });
+}
 
 // Trackear Analytics (Ahora soporta lead_id opcional)
 app.post('/api/analytics', (req, res) => {
@@ -215,9 +227,13 @@ app.post('/api/admin/login', (req, res) => {
 // Obtener Resultados (Leads + Score + Click en Calendario)
 app.get('/api/admin/results', checkAdmin, (req, res) => {
   const sql = `
-    SELECT l.*, a.data as score_data 
+    SELECT 
+      l.id, l.nombre, l.email, l.rubro, l.empresa, l.fecha,
+      a1.data as score_data,
+      (SELECT 1 FROM analytics a2 WHERE a2.lead_id = l.id AND a2.event_type = 'cta_clicked' LIMIT 1) as clicked_cta
     FROM leads l 
-    LEFT JOIN analytics a ON l.id = a.lead_id AND a.event_type = 'lead_submitted'
+    LEFT JOIN analytics a1 ON l.id = a1.lead_id AND a1.event_type = 'lead_submitted'
+    GROUP BY l.email
     ORDER BY l.fecha DESC
   `;
   db.all(sql, [], (err, rows) => {
