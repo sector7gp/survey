@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Encuesta: Madurez Digital PyMEs</title>
-    <meta name="description" content="Evaluá el nivel de madurez digital de tu empresa en pocos minutos y descubrí cómo optimizar tu gestión.">
+    <meta name="description"
+        content="Evaluá el nivel de madurez digital de tu empresa en pocos minutos y descubrí cómo optimizar tu gestión.">
     <!-- Google Fonts: Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -12,15 +14,17 @@
     <!-- Main CSS -->
     <link rel="stylesheet" href="/css/style.css">
 </head>
+
 <body>
     <div id="app" class="app-container">
-        
+
         <!-- PANTALLA INICIO -->
         <section id="screen-intro" class="screen screen-active">
             <div class="glass-card text-center slide-up">
-                <h1 class="main-title">Diagnóstico de Madurez Digital</h1>
-                <p class="subtitle">Evaluá cómo está gestionando la información tu Pyme y descubrí tu potencial de mejora.</p>
-                
+                <h1 class="main-title">Diagnóstico del Núcleo Digital</h1>
+                <p class="subtitle">Evaluá cómo está gestionando la información tu empresa y descubrí tu potencial de
+                    mejora.</p>
+
                 <div class="intro-features">
                     <div class="feature-item">⏱️ Toma 2 minutos</div>
                     <div class="feature-item">🎯 Score personalizado</div>
@@ -40,7 +44,7 @@
                 </div>
                 <div id="progress-text" class="progress-text">Pregunta 1 de 8</div>
             </div>
-            
+
             <div class="glass-card question-container slide-in">
                 <h2 id="question-text" class="question-text">Cargando...</h2>
                 <div id="options-container" class="options-grid">
@@ -57,14 +61,16 @@
         <!-- PANTALLA INTERSTICIAL (PRE-RESULTADO) -->
         <section id="screen-interstitial" class="screen screen-hidden">
             <div class="glass-card slide-up">
-                <h2 class="text-center mb-4">¿Querés recibir tu diagnóstico completo con recomendaciones concretas para mejorar tu gestión?</h2>
+                <h2 class="text-center mb-4">¿Querés recibir tu diagnóstico completo con recomendaciones concretas para
+                    mejorar tu gestión?</h2>
                 <form id="form-interstitial" class="form-grid">
                     <input type="text" id="int-name" placeholder="Tu Nombre *" required>
                     <input type="email" id="int-email" placeholder="Tu Email *" required>
                     <button type="submit" class="btn btn-primary btn-block">Enviar mi informe</button>
                 </form>
                 <div class="text-center mt-4">
-                    <button id="btn-skip-lead" class="btn btn-outline btn-block">Ver resultado ahora (sin informe)</button>
+                    <button id="btn-skip-lead" class="btn btn-outline btn-block">Ver resultado ahora (sin
+                        informe)</button>
                 </div>
             </div>
             <div class="bg-gradient"></div>
@@ -75,18 +81,18 @@
             <div class="glass-card result-card zoom-in">
                 <div id="result-emoji" class="result-emoji">⌛</div>
                 <div id="result-label" class="result-badge">Calculando perfil...</div>
-                
+
                 <h1 id="result-title" class="result-title">...</h1>
                 <div class="score-display">
                     Puntuación: <span id="score-text" class="score-highlight">0/24</span>
                 </div>
-                
+
                 <p id="result-desc" class="result-desc">...</p>
-                
+
                 <div class="cta-box">
                     <h3 id="cta-title">Siguiente Paso</h3>
                     <p id="cta-text">Cargando sugerencia...</p>
-                    
+
                     <a id="btn-cta-primary" href="#" target="_blank" class="btn btn-primary btn-large btn-block mt-4">
                         Agendar Reunión 📅
                     </a>
@@ -114,7 +120,7 @@
                     <div id="form-success_msg" class="msg-success hidden">¡Gracias! Hemos guardado tus datos.</div>
                 </div>
             </div>
-            
+
             <div class="bg-gradient-result"></div>
         </section>
 
@@ -127,4 +133,5 @@
     <script src="/js/survey.js"></script>
     <script src="/js/main.js"></script>
 </body>
+
 </html>
