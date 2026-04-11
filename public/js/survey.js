@@ -84,12 +84,12 @@ const SurveyEngine = {
 
         // Opcional: Auto-avanzar despues de un delay corto
         setTimeout(() => {
-           if(this.currentIndex < this.questions.length - 1) {
-               this.btnNext.click();
-           } else {
-               // Si es la última, habilitamos boton siguiente que dirá "Ver Resultados"
-               this.updateButtons();
-           }
+            if(this.currentIndex < this.questions.length - 1) {
+                this.btnNext.click();
+            } else {
+                // Si es la última, terminamos automáticamente para ir a la captura
+                this.nextQuestion();
+            }
         }, 400); 
     },
 

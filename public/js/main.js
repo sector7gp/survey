@@ -64,12 +64,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         
         renderResults(finalScore, finalProfileCode);
         
-        // Si ya tenemos Lead ID de una sesion previa, saltamos a resultados, sino a Intersticial
-        if (currentLeadId) {
-            switchScreen(screenSurvey, screenResult);
-        } else {
-            switchScreen(screenSurvey, screenInterstitial);
-        }
+        // Mostrar siempre el intersticial de captura después de la encuesta
+        switchScreen(screenSurvey, screenInterstitial);
     }
 
     // Eventos Intersticial
