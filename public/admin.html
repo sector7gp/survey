@@ -27,12 +27,48 @@
     <div id="dashboard-screen" class="screen screen-hidden">
         <header class="admin-header">
             <div class="header-content">
-                <h1>Dashboard de Resultados</h1>
+                <h1>Panel de Encuestas</h1>
                 <button id="btn-logout" class="btn btn-outline">Cerrar Sesión</button>
             </div>
+            <nav class="admin-tabs">
+                <button type="button" class="admin-tab active" data-tab="leads">Leads</button>
+                <button type="button" class="admin-tab" data-tab="surveys">Encuestas</button>
+            </nav>
         </header>
 
         <main class="admin-main">
+            <!-- Encuestas -->
+            <section id="tab-surveys" class="tab-panel hidden">
+                <div class="glass-card table-section">
+                    <div class="table-header">
+                        <h2>Encuestas</h2>
+                        <button id="btn-new-survey" class="btn btn-primary">+ Nueva encuesta</button>
+                    </div>
+                    <div class="table-wrapper">
+                        <table id="surveys-table">
+                            <thead>
+                                <tr>
+                                    <th>Nombre</th>
+                                    <th>ID público</th>
+                                    <th>Leads</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="surveys-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Leads -->
+            <section id="tab-leads" class="tab-panel">
+            <div class="filter-bar glass-card mb-4" style="padding: 16px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+                <label for="filter-survey" style="font-size: 0.9rem;">Filtrar por encuesta:</label>
+                <select id="filter-survey" class="admin-select">
+                    <option value="">Todas las encuestas</option>
+                </select>
+            </div>
             <!-- Stats Grid -->
             <div class="stats-grid">
                 <div class="stat-card glass-card">
@@ -74,6 +110,7 @@
                                 <th>Cargo</th>
                                 <th>WhatsApp</th>
                                 <th>Ubicación</th>
+                                <th>Encuesta</th>
                                 <th>Perfil</th>
                                 <th>Score</th>
                                 <th>Informe</th>
@@ -89,7 +126,35 @@
                     </table>
                 </div>
             </div>
+            </section>
         </main>
+    </div>
+
+    <!-- MODAL EDITOR ENCUESTA -->
+    <div id="modal-survey-editor" class="modal-overlay hidden">
+        <div class="modal-content glass-card modal-wide zoom-in">
+            <div class="modal-header">
+                <h3 id="survey-editor-title">Editar encuesta</h3>
+                <button id="btn-close-survey-editor" class="btn-close">&times;</button>
+            </div>
+            <form id="form-survey-editor" class="survey-editor-form">
+                <input type="hidden" id="edit-survey-id">
+                <div class="form-row">
+                    <label>Nombre interno</label>
+                    <input type="text" id="edit-survey-name" required placeholder="Ej: Madurez Digital Q2">
+                </div>
+                <div class="form-row form-row-inline">
+                    <label><input type="checkbox" id="edit-survey-active" checked> Activa</label>
+                    <label><input type="checkbox" id="edit-survey-default"> Encuesta por defecto</label>
+                </div>
+                <p class="text-muted text-sm">Configuración JSON: <code>meta</code>, <code>questions</code>, <code>profiles</code>, <code>scoring</code></p>
+                <textarea id="edit-survey-config" rows="18" class="config-textarea" spellcheck="false"></textarea>
+                <div class="modal-actions">
+                    <button type="button" id="btn-cancel-survey-editor" class="btn btn-outline">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Guardar cambios</button>
+                </div>
+            </form>
+        </div>
     </div>
 
     <!-- MODAL DETALLES -->
@@ -117,6 +182,6 @@
         </div>
     </div>
 
-    <script src="/js/admin.js"></script>
+    <script src="/js/admin.js?v=2.0.0"></script>
 </body>
 </html>

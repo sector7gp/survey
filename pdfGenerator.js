@@ -8,7 +8,10 @@ const PDFDocument = require('pdfkit');
  * @param {Object} scoreData - Contains score, profile, detailedAnswers (array of { question, answer, points })
  * @param {Object} profileConfig - The configuration object for this profile from preguntas.json
  */
-function generatePDF(leadData, scoreData, profileConfig) {
+function generatePDF(leadData, scoreData, profileConfig, options = {}) {
+  const maxScore = options.maxScore ?? 24;
+  const pdfTitle = options.pdfTitle || 'Diagnóstico del Núcleo Digital';
+
   return new Promise((resolve, reject) => {
     try {
       const doc = new PDFDocument({ margin: 50, bufferPages: true });
@@ -36,7 +39,7 @@ function generatePDF(leadData, scoreData, profileConfig) {
       doc.fillColor('#ffffff')
          .fontSize(22)
          .font('Helvetica-Bold')
-         .text('Diagnóstico del Núcleo Digital', 50, 40);
+         .text(pdfTitle, 50, 40);
 
       doc.fontSize(12)
          .font('Helvetica')
@@ -92,7 +95,7 @@ function generatePDF(leadData, scoreData, profileConfig) {
       doc.fillColor(colors.neutralDark)
          .fontSize(16)
          .font('Helvetica-Bold')
-         .text(`Score: ${scoreData.score} / 24`, 410, resultY + 24, { align: 'right', width: 130 });
+         .text(`Score: ${scoreData.score} / ${maxScore}`, 410, resultY + 24, { align: 'right', width: 130 });
 
       // Descripción Corta
       doc.fillColor(colors.neutralDark)

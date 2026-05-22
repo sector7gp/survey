@@ -1,10 +1,10 @@
-# 📊 Diagnóstico de Madurez Digital v1.2
+# 📊 Plataforma de Encuestas v2.0
 
-Sistema de encuestas mobile-first para evaluación de madurez digital, con captura de leads, persistencia en SQLite y panel administrativo integrado.
+Sistema multi-encuesta mobile-first: cada encuesta tiene un **ID público hasheado** (32 caracteres hex), configuración en base de datos, captura de leads por encuesta, panel administrativo con CRUD de encuestas y exportación CSV.
 
 ## 🏗️ Arquitectura
 
-Aplicación **monolítica Node.js**: Express sirve el frontend estático y la API REST. La configuración de la encuesta vive en JSON; el scoring se calcula en el cliente y se persiste en el servidor junto con los leads.
+Aplicación **monolítica Node.js**: Express sirve el frontend estático y la API REST. Cada encuesta se almacena en SQLite (`surveys.config_json`); el scoring se calcula en el cliente y los leads se asocian por `survey_id`.
 
 ```mermaid
 flowchart LR
@@ -18,7 +18,8 @@ flowchart LR
   end
   subgraph servidor["Servidor (Node.js)"]
     server[server.js]
-    config[preguntas.json + cutoff.json]
+    surveys[(tabla surveys)]
+    lib[lib/surveys.js]
     pdf[pdfGenerator.js]
     db[(database.sqlite)]
     mail[Nodemailer]
@@ -29,7 +30,8 @@ flowchart LR
   main --> analytics
   admin --> server
   main -->|/api/*| server
-  server --> config
+  server --> surveys
+  server --> lib
   server --> db
   server --> pdf
   server --> mail
@@ -41,8 +43,8 @@ flowchart LR
 |------|------------|-----------------|
 | Frontend | HTML/CSS/JS vanilla en `public/` | UX mobile-first, motor de encuesta, captura de leads, panel admin |
 | API | Express 4 + Helmet + CORS + rate-limit | Config, leads, analytics, rutas admin |
-| Config | `preguntas.json`, `cutoff.json` | Preguntas, perfiles (rojo/amarillo/verde), rangos de puntaje (0–24) |
-| Persistencia | SQLite3 (`database.sqlite`) | Tablas `leads` y `analytics` |
+| Encuestas | Tabla `surveys` + `lib/surveys.js` | CRUD admin, `public_id` opaco, JSON con `meta`, `questions`, `profiles`, `scoring` |
+| Persistencia | SQLite3 (`database.sqlite`) | Tablas `surveys`, `leads`, `analytics` |
 | Notificaciones | Nodemailer + PDFKit | Email con reporte PDF adjunto al completar lead con score |
 
 ### Flujo de usuario
@@ -52,29 +54,45 @@ flowchart LR
 3. **Scoring** en cliente: suma de puntos + perfil según `cutoff.json` (`scoring.js`).
 4. **Intersticial** (nombre + email) o “ver resultado sin informe”.
 5. **Resultado** con CTA a calendario y formulario extendido (rubro, tamaño, cargo, WhatsApp, ubicación).
-6. **Backend** `POST /api/leads`: deduplicación por email (update si existe, insert si no); con `scoreData` registra `lead_submitted` y envía email con PDF.
+6. **Backend** `POST /api/leads`: deduplicación por **email + encuesta**; con `scoreData` registra `lead_submitted` y envía email con PDF.
+
+### Enlaces públicos por encuesta
+
+| Formato | Ejemplo |
+|---------|---------|
+| Ruta corta | `https://tudominio.com/e/a1b2c3d4e5f6...` (32 chars) |
+| Query param | `https://tudominio.com/?s=a1b2c3d4e5f6...` |
+| Sin ID | Carga la encuesta marcada como **por defecto** |
+
+El `public_id` se genera con `crypto.randomBytes(16)` (no es reversible desde el ID interno).
 
 ### API principal
 
 | Método | Ruta | Descripción |
 |--------|------|-------------|
-| `GET` | `/api/config` | Preguntas, perfiles y reglas de scoring |
-| `POST` | `/api/leads` | Crear/actualizar lead y opcionalmente guardar score + email |
-| `POST` | `/api/analytics` | Eventos del funnel (`survey_started`, `question_answered`, `cta_clicked`, etc.) |
-| `POST` | `/api/admin/login` | Validar contraseña admin |
-| `GET` | `/api/admin/results` | Listado de leads con scores (requiere `x-admin-token`) |
-| `GET` | `/api/admin/stats` | Totales y distribución de perfiles |
-| `DELETE` | `/api/admin/leads/:id` | Eliminar lead y sus analytics |
+| `GET` | `/api/surveys/:publicId/config` | Config de una encuesta por ID público |
+| `GET` | `/api/config` | Encuesta por defecto (o `?s=publicId`) |
+| `POST` | `/api/leads` | Lead + `survey_id` / `public_id` + score |
+| `POST` | `/api/analytics` | Eventos con `survey_id` / `public_id` |
+| `GET` | `/api/admin/surveys` | Listar encuestas (admin) |
+| `GET` | `/api/admin/surveys/:id` | Detalle para edición (admin) |
+| `POST` | `/api/admin/surveys` | Crear encuesta (admin) |
+| `PUT` | `/api/admin/surveys/:id` | Modificar nombre, config JSON, activa/default (admin) |
+| `DELETE` | `/api/admin/surveys/:id` | Eliminar o desactivar si tiene leads (admin) |
+| `GET` | `/api/admin/results?survey_id=` | Leads filtrados por encuesta |
+| `GET` | `/api/admin/stats?survey_id=` | Stats filtradas |
 
 ### Estructura del proyecto
 
 ```
 survey/
-├── server.js           # API, SQLite, email, estáticos
-├── preguntas.json      # Preguntas y copy de perfiles
-├── cutoff.json         # Umbrales de scoring (0–11 / 12–18 / 19–24)
-├── pdfGenerator.js     # Generación del reporte PDF
-├── migrate.js          # Migración de columnas en SQLite
+├── server.js              # API, SQLite, email, estáticos
+├── lib/surveys.js         # Validación, seed, helpers de encuestas
+├── migrate-multi-survey.js # Migración a multi-encuesta
+├── preguntas.json         # Legacy (seed de encuesta default)
+├── cutoff.json            # Legacy (seed scoring default)
+├── pdfGenerator.js        # Generación del reporte PDF
+├── migrate.js             # Migración de columnas en leads
 ├── public/
 │   ├── index.html      # Encuesta pública
 │   ├── admin.html      # Panel administrativo
@@ -90,10 +108,12 @@ survey/
 ```
 
 ## 🚀 Características Principales
-- **Motor de Encuestas**: Lógica de scoring dinámica basada en JSON.
-- **Captura de Leads**: Flujo intersticial y pre-resultado para maximizar conversión.
-- **Deduplicación**: El sistema reconoce emails existentes y actualiza registros.
-- **Panel Admin**: Visualización de estadísticas, detalle de respuestas de cada usuario y exportación a CSV.
+- **Multi-encuesta**: Varias encuestas aisladas por `public_id` hasheado.
+- **Admin CRUD**: Crear, editar (JSON), clonar, desactivar y copiar enlace público desde `/admin.html` → pestaña Encuestas.
+- **Motor de Encuestas**: Scoring dinámico por JSON (`questions`, `profiles`, `scoring`).
+- **Captura de Leads**: Flujo intersticial y formulario extendido por encuesta.
+- **Deduplicación**: Mismo email en la **misma encuesta** actualiza el registro; en otra encuesta crea otro lead.
+- **Panel Admin**: Stats y leads filtrables por encuesta, detalle de respuestas, CSV.
 - **Notificaciones**: Envío automático de reportes personalizados vía Email (Nodemailer).
 - **Seguridad**: Protección de rutas administrativas y endurecimiento de headers (Helmet).
 
@@ -125,7 +145,13 @@ survey/
    ```
 
 ## 🗄️ Migraciones de Base de Datos
-Si estás actualizando desde una versión anterior, debés correr el script de migración para agregar las nuevas columnas a la base de datos (`tamano_empresa`, `provincia`, `ciudad`, `whatsapp`, `cargo`):
+
+**Multi-encuesta (v2):** importa `preguntas.json` + `cutoff.json` como encuesta por defecto si la BD está vacía:
+```bash
+node migrate-multi-survey.js
+```
+
+**Columnas de leads (v1):** si actualizás desde una versión muy antigua:
 ```bash
 node migrate.js
 ```
