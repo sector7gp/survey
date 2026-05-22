@@ -18,14 +18,14 @@ function generatePDF(leadData, scoreData, profileConfig) {
       doc.on('end', () => resolve(Buffer.concat(buffers)));
       doc.on('error', err => reject(err));
 
-      // Colores de Perfil
+      // Colores de Perfil (Paleta de la Web)
       const colors = {
-        green: { primary: '#16a34a', bg: '#f0fdf4', text: '#15803d' },
-        yellow: { primary: '#ca8a04', bg: '#fef9c3', text: '#a16207' },
-        red: { primary: '#dc2626', bg: '#fef2f2', text: '#b91c1c' },
-        neutralDark: '#1e293b',
+        green: { primary: '#10b981', bg: '#f0fdf4', text: '#047857' },
+        yellow: { primary: '#f59e0b', bg: '#fef9c3', text: '#b45309' },
+        red: { primary: '#ef4444', bg: '#fef2f2', text: '#b91c1c' },
+        neutralDark: '#0f172a',
         neutralLight: '#64748b',
-        border: '#e2e8f0'
+        border: '#cbd5e1'
       };
 
       const profileColor = colors[scoreData.profile] || colors.red;
@@ -82,20 +82,17 @@ function generatePDF(leadData, scoreData, profileConfig) {
       // Dibujar borde del resultado
       doc.rect(50, resultY, 512, 100).strokeColor(profileColor.primary).stroke();
 
-      // Emoji y Título Perfil
+      // Título Perfil (Sin emojis para evitar caracteres unicode extraños en PDFKit)
       doc.fillColor(profileColor.text)
-         .fontSize(28)
-         .text(profileConfig.emoji || '📊', 75, resultY + 15, { lineBreak: false });
-
-      doc.fontSize(18)
+         .fontSize(18)
          .font('Helvetica-Bold')
-         .text(`Perfil: ${profileConfig.title}`, 120, resultY + 18);
+         .text(`Perfil: ${profileConfig.title}`, 75, resultY + 22);
 
       // Puntaje
       doc.fillColor(colors.neutralDark)
          .fontSize(16)
          .font('Helvetica-Bold')
-         .text(`Score: ${scoreData.score} / 24`, 410, resultY + 20, { align: 'right', width: 130 });
+         .text(`Score: ${scoreData.score} / 24`, 410, resultY + 24, { align: 'right', width: 130 });
 
       // Descripción Corta
       doc.fillColor(colors.neutralDark)
@@ -122,56 +119,64 @@ function generatePDF(leadData, scoreData, profileConfig) {
          .text(profileConfig.ctaText || '', 50, recY + 48, { width: 512, lineGap: 3 });
 
       // --- RESPUESTAS DETALLADAS (Nueva Página) ---
-      doc.addPage();
-
-      doc.fillColor(colors.neutralDark)
-         .fontSize(16)
-         .font('Helvetica-Bold')
-         .text('Detalle de Respuestas del Diagnóstico', 50, 40);
-
-      doc.moveTo(50, 62).lineTo(562, 62).strokeColor(colors.border).stroke();
-
-      let ansY = 80;
       const answers = scoreData.detailedAnswers || [];
-
-      answers.forEach((ans, index) => {
-        // Verificar si la respuesta cabe en la página, sino agregar nueva página
-        if (ansY > 700) {
-          doc.addPage();
-          ansY = 50;
-        }
-
-        doc.fillColor(profileColor.primary)
-           .fontSize(10)
-           .font('Helvetica-Bold')
-           .text(`Pregunta ${index + 1}:`, 50, ansY);
+      if (answers.length > 0) {
+        doc.addPage();
 
         doc.fillColor(colors.neutralDark)
+           .fontSize(16)
            .font('Helvetica-Bold')
-           .text(ans.question, 120, ansY, { width: 442, lineGap: 2 });
+           .text('Detalle de Respuestas del Diagnóstico', 50, 40);
 
-        const qHeight = doc.heightOfString(ans.question, { width: 442 });
-        ansY += qHeight + 6;
+        doc.moveTo(50, 62).lineTo(562, 62).strokeColor(colors.border).stroke();
 
-        doc.fillColor(colors.neutralLight)
-           .font('Helvetica-Bold')
-           .text('Respuesta:', 120, ansY);
+        let ansY = 80;
+        answers.forEach((ans, index) => {
+          // Verificar si la respuesta cabe en la página, sino agregar nueva página
+          if (ansY > 670) {
+            doc.addPage();
+            ansY = 50;
+          }
 
-        doc.fillColor(colors.neutralDark)
-           .font('Helvetica')
-           .text(`${ans.answer} (${ans.points} pts)`, 190, ansY, { width: 372 });
+          doc.fillColor(profileColor.primary)
+             .fontSize(10)
+             .font('Helvetica-Bold')
+             .text(`Pregunta ${index + 1}:`, 50, ansY);
 
-        ansY += 32; // Espacio entre preguntas
-      });
+          doc.fillColor(colors.neutralDark)
+             .font('Helvetica-Bold')
+             .text(ans.question, 120, ansY, { width: 442, lineGap: 2 });
+
+          const qHeight = doc.heightOfString(ans.question, { width: 442 });
+          ansY += qHeight + 6;
+
+          doc.fillColor(colors.neutralLight)
+             .font('Helvetica-Bold')
+             .text('Respuesta:', 120, ansY);
+
+          doc.fillColor(colors.neutralDark)
+             .font('Helvetica')
+             .text(`${ans.answer} (${ans.points} pts)`, 190, ansY, { width: 372 });
+
+          ansY += 32; // Espacio entre preguntas
+        });
+      }
 
       // --- PIE DE PÁGINA ---
       const pageCount = doc.bufferedPageRange().count;
       for (let i = 0; i < pageCount; i++) {
         doc.switchToPage(i);
+        
+        // Desactivar temporalmente el margen inferior para evitar saltos de página del footer
+        const oldBottomMargin = doc.page.margins.bottom;
+        doc.page.margins.bottom = 0;
+
         doc.fillColor(colors.neutralLight)
            .fontSize(8)
-           .text('Pablo Gon | Facilitador Tecnológico  -  Diagnóstico de Madurez Digital', 50, 750, { align: 'left', width: 400 });
-        doc.text(`Página ${i + 1} de ${pageCount}`, 450, 750, { align: 'right', width: 112 });
+           .text('Pablo Gon | Facilitador Tecnológico  -  Diagnóstico de Madurez Digital', 50, 755, { align: 'left', width: 400 });
+        doc.text(`Página ${i + 1} de ${pageCount}`, 450, 755, { align: 'right', width: 112 });
+
+        doc.page.margins.bottom = oldBottomMargin;
       }
 
       // Finalizar documento
