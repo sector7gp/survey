@@ -109,7 +109,11 @@ const Admin = {
                 <td>${new Date(lead.fecha).toLocaleDateString()}</td>
                 <td><strong>${lead.nombre}</strong></td>
                 <td>${lead.email}</td>
-                <td>${lead.rubro || '-'}</td>
+                <td>${lead.empresa || '-'}</td>
+                <td>${lead.tamano_empresa || '-'}</td>
+                <td>${lead.cargo || '-'}</td>
+                <td>${lead.whatsapp || '-'}</td>
+                <td>${[lead.ciudad, lead.provincia].filter(Boolean).join(', ') || '-'}</td>
                 <td><span class="badge-profile ${profile}">${String(profile).toUpperCase()}</span></td>
                 <td>${score} / 24</td>
                 <td style="text-align:center">${requestedReport}</td>
@@ -158,17 +162,23 @@ const Admin = {
 
     openDetails(id) {
         const lead = this.resultsData.find(l => l.id === id);
-        if (!lead || !lead.score_data) return;
+        if (!lead) return;
 
-        document.getElementById('md-name').textContent = lead.nombre;
-        document.getElementById('md-email').textContent = lead.email;
+        document.getElementById('md-name').textContent = lead.nombre || '-';
+        document.getElementById('md-email').textContent = lead.email || '-';
+        document.getElementById('md-company').textContent = lead.empresa || '-';
+        document.getElementById('md-size').textContent = lead.tamano_empresa || '-';
+        document.getElementById('md-role').textContent = lead.cargo || '-';
+        document.getElementById('md-whatsapp').textContent = lead.whatsapp || '-';
+        document.getElementById('md-location').textContent = [lead.ciudad, lead.provincia].filter(Boolean).join(', ') || '-';
+        document.getElementById('md-rubro').textContent = lead.rubro || '-';
         
         const list = document.getElementById('answers-list');
         list.innerHTML = '';
 
-        const answers = lead.score_data.detailedAnswers || [];
+        const answers = (lead.score_data && lead.score_data.detailedAnswers) ? lead.score_data.detailedAnswers : [];
         if (answers.length === 0) {
-            list.innerHTML = '<p class="text-muted">No hay detalles de respuestas disponibles para este registro.</p>';
+            list.innerHTML = '<p class="text-muted text-center py-4">No hay detalles de respuestas disponibles para este registro.</p>';
         } else {
             answers.forEach(a => {
                 const item = document.createElement('div');
@@ -191,24 +201,30 @@ const Admin = {
     exportCSV() {
         if (!this.resultsData) return;
         
-        const headers = ["Fecha", "Nombre", "Email", "Rubro", "Empresa", "Perfil", "Score"];
+        const headers = ["Fecha", "Nombre", "Email", "Empresa", "Tamaño", "Cargo", "WhatsApp", "Provincia", "Ciudad", "Rubro", "Perfil", "Score"];
         const rows = this.resultsData.map(l => [
             new Date(l.fecha).toLocaleDateString(),
-            l.nombre,
-            l.email,
-            l.rubro,
-            l.empresa,
+            `"${(l.nombre || '').replace(/"/g, '""')}"`,
+            `"${(l.email || '').replace(/"/g, '""')}"`,
+            `"${(l.empresa || '').replace(/"/g, '""')}"`,
+            `"${(l.tamano_empresa || '').replace(/"/g, '""')}"`,
+            `"${(l.cargo || '').replace(/"/g, '""')}"`,
+            `"${(l.whatsapp || '').replace(/"/g, '""')}"`,
+            `"${(l.provincia || '').replace(/"/g, '""')}"`,
+            `"${(l.ciudad || '').replace(/"/g, '""')}"`,
+            `"${(l.rubro || '').replace(/"/g, '""')}"`,
             l.score_data ? l.score_data.profile : '',
             l.score_data ? l.score_data.score : ''
         ]);
         
-        let csvContent = "data:text/csv;charset=utf-8," 
+        let csvContent = "\uFEFF" // Byte Order Mark for Excel UTF-8 support
             + headers.join(",") + "\n"
             + rows.map(e => e.join(",")).join("\n");
             
-        const encodedUri = encodeURI(csvContent);
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
         const link = document.createElement("a");
-        link.setAttribute("href", encodedUri);
+        link.setAttribute("href", url);
         link.setAttribute("download", `leads_encuesta_${new Date().toISOString().split('T')[0]}.csv`);
         document.body.appendChild(link);
         link.click();

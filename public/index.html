@@ -114,7 +114,18 @@
                             <option value="agro">Agro</option>
                             <option value="otro">Otro</option>
                         </select>
+                        <select id="lead-size" required>
+                            <option value="">Tamaño de la Empresa *</option>
+                            <option value="1-50">1 a 50 empleados</option>
+                            <option value="51-99">51 a 99 empleados</option>
+                            <option value="100-300">100 a 300 empleados</option>
+                            <option value="300+">Más de 300 empleados</option>
+                        </select>
                         <input type="text" id="lead-company" placeholder="Nombre de tu empresa (Opcional)">
+                        <input type="text" id="lead-role" placeholder="Tu Cargo / Rol *" required>
+                        <input type="tel" id="lead-whatsapp" placeholder="WhatsApp / Celular (con prefijo) *" required>
+                        <input type="text" id="lead-province" placeholder="Provincia *" required>
+                        <input type="text" id="lead-city" placeholder="Ciudad *" required>
                         <button type="submit" class="btn btn-secondary btn-block">Recibir Reporte Detallado</button>
                     </form>
                     <div id="form-success_msg" class="msg-success hidden">¡Gracias! Hemos guardado tus datos.</div>

@@ -182,6 +182,11 @@ document.addEventListener('DOMContentLoaded', async () => {
             email: document.getElementById('lead-email').value,
             rubro: document.getElementById('lead-industry').value,
             empresa: document.getElementById('lead-company').value,
+            tamano_empresa: document.getElementById('lead-size').value,
+            provincia: document.getElementById('lead-province').value,
+            ciudad: document.getElementById('lead-city').value,
+            whatsapp: document.getElementById('lead-whatsapp').value,
+            cargo: document.getElementById('lead-role').value,
             scoreData: {
                 score: finalScore,
                 profile: finalProfileCode,

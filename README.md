@@ -37,6 +37,12 @@ Sistema de encuestas mobile-first para evaluación de madurez digital, con captu
    FROM_EMAIL="Pablo Gon | Facilitador <correo@ejemplo.com>"
    ```
 
+## 🗄️ Migraciones de Base de Datos
+Si estás actualizando desde una versión anterior, debés correr el script de migración para agregar las nuevas columnas a la base de datos (`tamano_empresa`, `provincia`, `ciudad`, `whatsapp`, `cargo`):
+```bash
+node migrate.js
+```
+
 ## 💻 Desarrollo
 
 Para correr el proyecto localmente con recarga automática:

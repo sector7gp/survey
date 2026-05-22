@@ -7,6 +7,7 @@ const sqlite3 = require('sqlite3').verbose();
 const nodemailer = require('nodemailer');
 const path = require('path');
 const fs = require('fs');
+const { generatePDF } = require('./pdfGenerator');
 
 const app = express();
 const PORT = process.env.PORT || 3005;
@@ -44,7 +45,7 @@ async function sendReportEmail(leadData, scoreData) {
     <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; color: #333; line-height: 1.6;">
       <h1 style="color: #3b82f6;">Tu Reporte de Madurez Digital</h1>
       <p>Hola <strong>${leadData.nombre}</strong>,</p>
-      <p>Gracias por realizar nuestra evaluación. Estos son tus resultados:</p>
+      <p>Gracias por realizar nuestra evaluación. Adjuntamos a este correo tu **Reporte Completo de Madurez Digital en PDF** con las respuestas de tu diagnóstico y recomendaciones personalizadas.</p>
       
       <div style="background: #f3f4f6; padding: 20px; border-radius: 8px; margin: 20px 0;">
         <h2 style="margin: 0; color: #1e293b;">Perfil: ${profile.title}</h2>
@@ -66,11 +67,20 @@ async function sendReportEmail(leadData, scoreData) {
   `;
 
   try {
+    const pdfBuffer = await generatePDF(leadData, scoreData, profile);
+    const safeName = leadData.nombre ? leadData.nombre.replace(/[^a-z0-9]/gi, '_') : 'Lead';
+
     await transporter.sendMail({
       from: process.env.FROM_EMAIL || process.env.SMTP_USER,
       to: leadData.email,
       subject: `Resultados: Tu Diagnóstico de Madurez Digital`,
       html: htmlContent,
+      attachments: [
+        {
+          filename: `Reporte_Madurez_Digital_${safeName}.pdf`,
+          content: pdfBuffer
+        }
+      ]
     });
     console.log(`Email enviado con éxito a ${leadData.email}`);
   } catch (error) {
@@ -87,6 +97,11 @@ function initDb() {
         email TEXT,
         rubro TEXT,
         empresa TEXT,
+        tamano_empresa TEXT,
+        provincia TEXT,
+        ciudad TEXT,
+        whatsapp TEXT,
+        cargo TEXT,
         fecha DATETIME DEFAULT CURRENT_TIMESTAMP
       )
     `);
@@ -154,7 +169,7 @@ app.get('/api/config', (req, res) => {
 
 // Guardar o Actualizar Lead
 app.post('/api/leads', (req, res) => {
-  const { nombre, email, rubro, empresa, scoreData } = req.body;
+  const { nombre, email, rubro, empresa, tamano_empresa, provincia, ciudad, whatsapp, cargo, scoreData } = req.body;
   if (!email) return res.status(400).json({ success: false, error: 'Email obligatorio' });
 
   // 1. Buscar si ya existe el lead
@@ -164,17 +179,41 @@ app.post('/api/leads', (req, res) => {
     if (row) {
       // 2. Si existe, ACTUALIZAR
       const leadId = row.id;
-      const updateSql = 'UPDATE leads SET nombre = ?, rubro = ?, empresa = ? WHERE id = ?';
-      db.run(updateSql, [nombre, rubro, empresa, leadId], (err) => {
+      const fields = [];
+      const params = [];
+      
+      if (nombre !== undefined) { fields.push('nombre = ?'); params.push(nombre); }
+      if (rubro !== undefined) { fields.push('rubro = ?'); params.push(rubro); }
+      if (empresa !== undefined) { fields.push('empresa = ?'); params.push(empresa); }
+      if (tamano_empresa !== undefined) { fields.push('tamano_empresa = ?'); params.push(tamano_empresa); }
+      if (provincia !== undefined) { fields.push('provincia = ?'); params.push(provincia); }
+      if (ciudad !== undefined) { fields.push('ciudad = ?'); params.push(ciudad); }
+      if (whatsapp !== undefined) { fields.push('whatsapp = ?'); params.push(whatsapp); }
+      if (cargo !== undefined) { fields.push('cargo = ?'); params.push(cargo); }
+      
+      params.push(leadId);
+      const updateSql = `UPDATE leads SET ${fields.join(', ')} WHERE id = ?`;
+      
+      db.run(updateSql, params, (err) => {
         if (err) console.error("Error updating lead:", err.message);
-        handleScoreData(leadId, scoreData, { nombre, email }, res);
+        handleScoreData(leadId, scoreData, { nombre, email, rubro, empresa, tamano_empresa, provincia, ciudad, whatsapp, cargo }, res);
       });
     } else {
       // 3. Si no existe, INSERTAR
-      const insertSql = 'INSERT INTO leads (nombre, email, rubro, empresa) VALUES (?, ?, ?, ?)';
-      db.run(insertSql, [nombre, email, rubro, empresa || ''], function (err) {
+      const insertSql = 'INSERT INTO leads (nombre, email, rubro, empresa, tamano_empresa, provincia, ciudad, whatsapp, cargo) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)';
+      db.run(insertSql, [
+        nombre || '', 
+        email, 
+        rubro || '', 
+        empresa || '', 
+        tamano_empresa || '', 
+        provincia || '', 
+        ciudad || '', 
+        whatsapp || '', 
+        cargo || ''
+      ], function (err) {
         if (err) return res.status(500).json({ success: false });
-        handleScoreData(this.lastID, scoreData, { nombre, email }, res);
+        handleScoreData(this.lastID, scoreData, { nombre, email, rubro, empresa, tamano_empresa, provincia, ciudad, whatsapp, cargo }, res);
       });
     }
   });
@@ -228,7 +267,7 @@ app.post('/api/admin/login', (req, res) => {
 app.get('/api/admin/results', checkAdmin, (req, res) => {
   const sql = `
     SELECT 
-      l.id, l.nombre, l.email, l.rubro, l.empresa, l.fecha,
+      l.id, l.nombre, l.email, l.rubro, l.empresa, l.tamano_empresa, l.provincia, l.ciudad, l.whatsapp, l.cargo, l.fecha,
       a1.data as score_data,
       (SELECT 1 FROM analytics a2 WHERE a2.lead_id = l.id AND a2.event_type = 'cta_clicked' LIMIT 1) as clicked_cta
     FROM leads l 

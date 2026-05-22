@@ -70,6 +70,10 @@
                                 <th>Nombre</th>
                                 <th>Email</th>
                                 <th>Empresa</th>
+                                <th>Tamaño</th>
+                                <th>Cargo</th>
+                                <th>WhatsApp</th>
+                                <th>Ubicación</th>
                                 <th>Perfil</th>
                                 <th>Score</th>
                                 <th>Informe</th>
@@ -96,8 +100,16 @@
                 <button id="btn-close-modal" class="btn-close">&times;</button>
             </div>
             <div class="modal-user-info">
-                <p><strong>Usuario:</strong> <span id="md-name">-</span></p>
-                <p><strong>Email:</strong> <span id="md-email">-</span></p>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 15px; font-size: 0.95rem;">
+                    <p><strong>Usuario:</strong> <span id="md-name">-</span></p>
+                    <p><strong>Email:</strong> <span id="md-email">-</span></p>
+                    <p><strong>Empresa:</strong> <span id="md-company">-</span></p>
+                    <p><strong>Tamaño:</strong> <span id="md-size">-</span></p>
+                    <p><strong>Cargo:</strong> <span id="md-role">-</span></p>
+                    <p><strong>WhatsApp:</strong> <span id="md-whatsapp">-</span></p>
+                    <p><strong>Ubicación:</strong> <span id="md-location">-</span></p>
+                    <p><strong>Rubro:</strong> <span id="md-rubro">-</span></p>
+                </div>
             </div>
             <div id="answers-list" class="answers-list">
                 <!-- Se llena por JS -->
