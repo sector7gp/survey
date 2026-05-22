@@ -11,7 +11,7 @@ const PDFDocument = require('pdfkit');
 function generatePDF(leadData, scoreData, profileConfig) {
   return new Promise((resolve, reject) => {
     try {
-      const doc = new PDFDocument({ margin: 50 });
+      const doc = new PDFDocument({ margin: 50, bufferPages: true });
       const buffers = [];
 
       doc.on('data', chunk => buffers.push(chunk));
