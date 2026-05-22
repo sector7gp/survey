@@ -214,6 +214,12 @@ select option { background: var(--color-bg); }
 .msg-success { color: var(--color-green); background: rgba(16, 185, 129, 0.1); padding: 12px; border-radius: var(--border-radius-sm); text-align: center; font-weight: 500; }
 .hidden { display: none !important; }
 
+/* Ocultar encabezados cuando el formulario se envía con éxito */
+.lead-form-box:has(#form-success_msg:not(.hidden)) h3,
+.lead-form-box:has(#form-success_msg:not(.hidden)) p {
+    display: none !important;
+}
+
 /* Animations */
 @keyframes fadeIn {
     from { opacity: 0; }
