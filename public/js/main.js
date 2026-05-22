@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const btnSkipLead = document.getElementById('btn-skip-lead');
     const formInterstitial = document.getElementById('form-interstitial');
     const formLead = document.getElementById('form-lead');
+    const leadFormContent = document.getElementById('lead-form-content');
     const formSuccessMsg = document.getElementById('form-success_msg');
     
     // Variables globales
@@ -204,7 +205,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             currentLeadId = result.lead_id;
             sessionStorage.setItem('current_lead_id', currentLeadId);
             
-            formLead.classList.add('hidden');
+            leadFormContent.classList.add('hidden');
             formSuccessMsg.classList.remove('hidden');
             window.Analytics.leadSubmitted(result.lead_id);
         } else {
