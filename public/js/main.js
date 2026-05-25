@@ -170,7 +170,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (userData.email) document.getElementById('lead-email').value = userData.email;
 
         const agendaLink =
-            profile.ctaLink || 'https://calendar.app.google/MVb6cbu5iAAZ1SG1A';
+            profile.ctaLink || 'https://www.cal.eu/pablogon';
         btnCtaPrimary.href = agendaLink;
 
         btnCtaPrimary.onclick = () => {

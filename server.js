@@ -99,7 +99,7 @@ async function sendReportEmail(leadData, scoreData, surveyRow) {
   const maxScore = config.scoring?.max ?? 24;
   const emailHeading = meta.emailHeading || 'Tu Reporte';
   const calendarLink =
-    profile.ctaLink || 'https://calendar.app.google/MVb6cbu5iAAZ1SG1A';
+    profile.ctaLink || 'https://www.cal.eu/pablogon';
 
   const htmlContent = `
     <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; color: #333; line-height: 1.6;">
